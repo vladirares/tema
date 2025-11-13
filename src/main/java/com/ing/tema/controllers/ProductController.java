@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -29,6 +30,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponse> createProduct(
             @RequestHeader(IDEMPOTENCY_HEADER) String idempotencyId,
             @RequestBody CreateProductRequest request,
@@ -66,6 +68,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}/price")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponse> changePrice(
             @RequestHeader(IDEMPOTENCY_HEADER) String idempotencyId,
             @PathVariable Long id,
@@ -86,6 +89,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteProduct(
             @RequestHeader(IDEMPOTENCY_HEADER) String idempotencyId,
             @PathVariable Long id,

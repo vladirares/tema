@@ -94,6 +94,11 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
+
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
+                )
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -104,18 +109,11 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
-                                "/swagger-ui/**"
+                                "/swagger-ui/**",
+                                "/h2-console/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**")
                         .hasAnyRole(Role.USER.name(), Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.POST, "/api/products/**")
-                        .hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**")
-                        .hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.DELETE, "/api/products/**")
-                        .hasRole(Role.ADMIN.name())
-
-
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
