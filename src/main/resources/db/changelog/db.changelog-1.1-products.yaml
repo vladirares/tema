@@ -1,0 +1,168 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-products-table
+      author: you
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_products
+                    nullable: false
+              - column:
+                  name: sku
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: VARCHAR(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: NUMERIC(19,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: VARCHAR(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(512)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2-create-idempotency-keys-table
+      author: you
+      changes:
+        - createTable:
+            tableName: idempotency_keys
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_idempotency_keys
+                    nullable: false
+              - column:
+                  name: idempotency_key
+                  type: VARCHAR(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: owner
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: http_method
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: path
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: idempotency_keys
+            columnNames: idempotency_key, owner
+            constraintName: uc_idempotency_key_owner
+
+  - changeSet:
+      id: 3-insert-sample-products
+      author: you
+      changes:
+        - insert:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: sku
+                  value: "SKU-APPLE-001"
+              - column:
+                  name: name
+                  value: "Red Apple"
+              - column:
+                  name: price
+                  valueNumeric: 1.29
+              - column:
+                  name: currency
+                  value: "EUR"
+              - column:
+                  name: description
+                  value: "Fresh red apple from local farms"
+        - insert:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: sku
+                  value: "SKU-BANANA-001"
+              - column:
+                  name: name
+                  value: "Banana"
+              - column:
+                  name: price
+                  valueNumeric: 0.99
+              - column:
+                  name: currency
+                  value: "EUR"
+              - column:
+                  name: description
+                  value: "Ripe bananas, perfect for smoothies"
+        - insert:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: sku
+                  value: "SKU-MILK-001"
+              - column:
+                  name: name
+                  value: "Whole Milk 1L"
+              - column:
+                  name: price
+                  valueNumeric: 2.49
+              - column:
+                  name: currency
+                  value: "EUR"
+              - column:
+                  name: description
+                  value: "1 liter whole milk"
