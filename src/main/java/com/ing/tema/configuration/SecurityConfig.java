@@ -30,7 +30,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableConfigurationProperties(JwtConfigProperties.class)
-@EnableMethodSecurity 
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtConfigProperties jwtConfigProperties;
@@ -39,14 +39,12 @@ public class SecurityConfig {
         this.jwtConfigProperties = jwtConfigProperties;
     }
 
-    
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    
 
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
@@ -58,11 +56,10 @@ public class SecurityConfig {
         return new ProviderManager(provider);
     }
 
-    
 
     @Bean
     public SecretKey jwtSecretKey() {
-        
+
         byte[] keyBytes = jwtConfigProperties.getSecret().getBytes();
         return new SecretKeySpec(keyBytes, "HmacSHA256");
     }
@@ -78,20 +75,18 @@ public class SecurityConfig {
         return new NimbusJwtEncoder(jwkSource);
     }
 
-    
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter delegate = new JwtGrantedAuthoritiesConverter();
-        delegate.setAuthoritiesClaimName("roles"); 
-        delegate.setAuthorityPrefix(""); 
+        delegate.setAuthoritiesClaimName("roles");
+        delegate.setAuthorityPrefix("");
 
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(delegate);
         return converter;
     }
 
-    
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
@@ -103,21 +98,25 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                                
-                                .requestMatchers("/api/auth/**").permitAll()
 
-                                
-                                .requestMatchers(HttpMethod.GET, "/api/products/**")
-                                .hasAnyRole(Role.USER.name(), Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.POST, "/api/products/**")
-                                .hasRole(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.PUT, "/api/products/**")
-                                .hasRole(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.DELETE, "/api/products/**")
-                                .hasRole(Role.ADMIN.name())
+                        .requestMatchers("/api/auth/**").permitAll()
 
-                                
-                                .anyRequest().authenticated()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**")
+                        .hasAnyRole(Role.USER.name(), Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/products/**")
+                        .hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**")
+                        .hasRole(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**")
+                        .hasRole(Role.ADMIN.name())
+
+
+                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))

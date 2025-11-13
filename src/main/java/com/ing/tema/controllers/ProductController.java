@@ -4,6 +4,7 @@ import com.ing.tema.dtos.ChangePriceRequest;
 import com.ing.tema.dtos.CreateProductRequest;
 import com.ing.tema.dtos.ProductResponse;
 import com.ing.tema.services.ProductService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -14,6 +15,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
+@SecurityRequirement(name = "bearer-jwt")
 @RequestMapping("/api/products")
 public class ProductController {
 
