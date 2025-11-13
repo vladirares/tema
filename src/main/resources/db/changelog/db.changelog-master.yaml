@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog-master.yaml
+
+  # Users & roles
+  - include:
+      file: db/changelog/db.changelog-1.0-users.yaml
+
+  # Products + idempotency keys + seed data
+  - include:
+      file: db/changelog/db.changelog-1.1-products.yaml
